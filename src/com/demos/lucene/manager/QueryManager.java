@@ -11,18 +11,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class SearchManager {
+public class QueryManager {
 
     private Constants.eAnalyzerType analyzer = Constants.eAnalyzerType.STANDARD;
-    private static SearchManager instance = null;
+    private static QueryManager instance = null;
     private IndexSearcher searcher = null;
 
-    private SearchManager() {
+    private QueryManager() {
     }
 
-    public static SearchManager getInstance() {
+    public static QueryManager getInstance() {
         if (Objects.isNull(instance)) {
-            instance = new SearchManager();
+            instance = new QueryManager();
         }
         return instance;
     }
