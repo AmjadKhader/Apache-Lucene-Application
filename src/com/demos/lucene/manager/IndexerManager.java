@@ -15,14 +15,11 @@ public class IndexerManager {
     }
 
     public static IndexWriter createIndex(String directoryStr, Constants.eAnalyzerType analyzerType) throws IOException {
-        FSDirectory directory = FSDirectory.open(Paths.get(directoryStr));
-        try {
+        try (FSDirectory directory = FSDirectory.open(Paths.get(directoryStr))) { // this will automatically close the directory
             return new IndexWriter(directory, new IndexWriterConfig(AnalyzerFactory.createAnalyzer(analyzerType)));
-
         } catch (Exception exception) {
             exception.printStackTrace();
             return null;
         }
     }
-
 }

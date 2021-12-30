@@ -40,7 +40,7 @@ public class MainIndexer {
             writer.deleteAll();
 
             writer.addDocuments(documents);
-            writer.commit();
+            writer.commit(); // try with resource will close the writer.
         } catch (Exception exception) {
             exception.printStackTrace();
         }
