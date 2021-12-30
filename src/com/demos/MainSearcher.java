@@ -31,7 +31,7 @@ public class MainSearcher {
         print(searchResult, searcher);
 
         //Search by Title
-        searchResult = QueryManager.getInstance().searchIndex(Constants.TITLE, MAX_DOC_NUMBER, "asking");
+        searchResult = QueryManager.getInstance().searchIndex(Constants.TITLE, MAX_DOC_NUMBER, "Amjad");
         log.println("Search by Title Results : " + searchResult.totalHits);
 
         print(searchResult, searcher);
