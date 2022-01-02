@@ -5,6 +5,7 @@ import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriterConfig;
 import com.demos.lucene.factory.AnalyzerFactory;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.IndexSearcher;
 import com.demos.lucene.constants.Constants;
 import org.apache.lucene.document.Document;
@@ -25,14 +26,11 @@ public class IndexManager {
 
     private static IndexManager instance = null;
     private IndexWriter indexWriter = null;
-    private IndexSearcher searcher = null;
 
-    private IndexManager() throws IOException {
-        searcher = SearcherManager.createSearcher(Constants.INDEX_DIR_STANDARD);
-        QueryManager.getInstance().setSearcher(searcher);
+    private IndexManager() {
     }
 
-    public static IndexManager getInstance() throws IOException {
+    public static IndexManager getInstance() {
         if (Objects.isNull(instance)) {
             instance = new IndexManager();
         }
@@ -50,6 +48,7 @@ public class IndexManager {
 
     public void createIndex() throws IOException {
         List<Document> documents = new ArrayList<>();
+
         Document document1 = createDocument(1, "my father", "My father is coming for the holidays to make cookies");
         Document document2 = createDocument(2, "cookies", "It takes an hour to make cookie in the holidays");
         Document document3 = createDocument(3, "asking", "What is your father doing?");
@@ -69,7 +68,7 @@ public class IndexManager {
         indexWriter.commit(); // try with resource will close the writer.
     }
 
-    public void deleteDocument(String documentId) throws Exception {
+    public void deleteDocument(String documentId) throws IOException, ParseException {
         Document document = getDocument(ID, documentId);
 
         if (!Objects.isNull(document)) {
@@ -78,7 +77,7 @@ public class IndexManager {
         }
     }
 
-    public void updateDocument(String term, String oldValue, String newValue) throws Exception {
+    public void updateDocument(String term, String oldValue, String newValue) throws IOException, ParseException {
         Document document = getDocument(term, oldValue);
 
         if (!Objects.isNull(document)) {
@@ -93,8 +92,17 @@ public class IndexManager {
         }
     }
 
-    private Document getDocument(String term, String value) throws Exception {
+    public void addDocument(String id, String title, String message) throws IOException {
+        Document document = createDocument(Integer.valueOf(id), title, message);
+
+        indexWriter.addDocument(document);
+        indexWriter.commit();
+    }
+
+    private Document getDocument(String term, String value) throws IOException, ParseException {
         Document document = null;
+        IndexSearcher searcher = SearcherManager.createSearcher(Constants.INDEX_DIR_STANDARD);
+        QueryManager.getInstance().setSearcher(searcher);
 
         for (ScoreDoc scoreDoc : QueryManager.getInstance().searchIndex(term, 1, value).scoreDocs) {
             document = searcher.doc(scoreDoc.doc);

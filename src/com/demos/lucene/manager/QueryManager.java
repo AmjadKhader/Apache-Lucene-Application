@@ -61,7 +61,6 @@ public class QueryManager {
     }
 
     public TopDocs searchIndexBoolean(String searchTerm, int maxDocumentNum, Map<String, BooleanClause.Occur> filterMap) throws IOException {
-        //create terms to search
         QueryParser queryParser = new QueryParser(searchTerm, AnalyzerFactory.createAnalyzer(analyzer));
         BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
 
