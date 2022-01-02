@@ -4,12 +4,15 @@ import com.demos.lucene.manager.SearcherManager;
 import com.demos.lucene.manager.QueryManager;
 import com.demos.lucene.constants.Constants;
 
+import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
@@ -73,8 +76,12 @@ public class MainSearcher {
         print(searchResult, searcher);
 
         //Boolean Query
-        searchResult = QueryManager.getInstance().searchIndexBoolean(Constants.MESSAGE, MAX_DOC_NUMBER,
-                "cook*", "holiday*");
+        Map<String, BooleanClause.Occur> filterMap = new HashMap<>();
+        filterMap.put("cook*", BooleanClause.Occur.MUST);
+        filterMap.put("holiday*", BooleanClause.Occur.MUST_NOT);
+        filterMap.put("f*r", BooleanClause.Occur.MUST_NOT);
+
+        searchResult = QueryManager.getInstance().searchIndexBoolean(Constants.MESSAGE, MAX_DOC_NUMBER, filterMap);
         log.println("Boolean Results :: " + searchResult.totalHits);
 
         print(searchResult, searcher);
