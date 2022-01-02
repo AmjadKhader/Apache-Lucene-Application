@@ -57,12 +57,12 @@ public class QueryManager {
         return searcher.search(builder.build(), maxDocumentNum);
     }
 
-    public TopDocs searchIndexBoolean(String searchTerm, int maxDocumentNum, String fieldNoInclude, String fieldNoExclude)
+    public TopDocs searchIndexBoolean(String searchTerm, int maxDocumentNum, String fieldToInclude, String fieldToExclude)
             throws Exception {
         //create terms to search
         QueryParser queryParser = new QueryParser(searchTerm, AnalyzerFactory.createAnalyzer(analyzer));
-        Query query1 = queryParser.parse(fieldNoInclude);
-        Query query2 = queryParser.parse(fieldNoExclude);
+        Query query1 = queryParser.parse(fieldToInclude);
+        Query query2 = queryParser.parse(fieldToExclude);
 
         BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
         booleanQuery.add(query1, BooleanClause.Occur.MUST);

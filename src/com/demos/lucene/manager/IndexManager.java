@@ -93,10 +93,10 @@ public class IndexManager {
         }
     }
 
-    private Document getDocument(String term, String oldValue) throws Exception {
+    private Document getDocument(String term, String value) throws Exception {
         Document document = null;
 
-        for (ScoreDoc scoreDoc : QueryManager.getInstance().searchIndex(term, 1, oldValue).scoreDocs) {
+        for (ScoreDoc scoreDoc : QueryManager.getInstance().searchIndex(term, 1, value).scoreDocs) {
             document = searcher.doc(scoreDoc.doc);
         }
         return document;
