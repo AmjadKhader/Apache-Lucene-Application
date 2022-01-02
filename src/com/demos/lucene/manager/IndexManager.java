@@ -25,11 +25,14 @@ public class IndexManager {
 
     private static IndexManager instance = null;
     private IndexWriter indexWriter = null;
+    private IndexSearcher searcher = null;
 
-    private IndexManager() {
+    private IndexManager() throws IOException {
+        searcher = SearcherManager.createSearcher(Constants.INDEX_DIR_STANDARD);
+        QueryManager.getInstance().setSearcher(searcher);
     }
 
-    public static IndexManager getInstance() {
+    public static IndexManager getInstance() throws IOException {
         if (Objects.isNull(instance)) {
             instance = new IndexManager();
         }
@@ -66,18 +69,37 @@ public class IndexManager {
         indexWriter.commit(); // try with resource will close the writer.
     }
 
-    public void updateDocument() throws Exception {
-        Document document = null;
-        IndexSearcher searcher = SearcherManager.createSearcher(Constants.INDEX_DIR_STANDARD);
-        QueryManager.getInstance().setSearcher(searcher);
+    public void deleteDocument(String documentId) throws Exception {
+        Document document = getDocument(ID, documentId);
 
-        for (ScoreDoc scoreDoc : QueryManager.getInstance().searchIndex(Constants.TITLE, 1, "asking").scoreDocs) {
+        if (!Objects.isNull(document)) {
+            indexWriter.deleteDocuments(new Term(ID, document.get(ID)));
+            indexWriter.commit();
+        }
+    }
+
+    public void updateDocument(String term, String oldValue, String newValue) throws Exception {
+        Document document = getDocument(term, oldValue);
+
+        if (!Objects.isNull(document)) {
+            indexWriter.deleteDocuments(new Term(ID, document.get(ID)));
+            indexWriter.commit();
+
+            document.removeField(term);
+            document.add(new StringField(term, newValue, Field.Store.YES));
+
+            indexWriter.addDocument(document);
+            indexWriter.commit();
+        }
+    }
+
+    private Document getDocument(String term, String oldValue) throws Exception {
+        Document document = null;
+
+        for (ScoreDoc scoreDoc : QueryManager.getInstance().searchIndex(term, 1, oldValue).scoreDocs) {
             document = searcher.doc(scoreDoc.doc);
         }
-
-        //todo: debug it more.
-        indexWriter.updateDocument(new Term(Constants.TITLE, "Amjad"), document);
-        indexWriter.commit(); // try with resource will close the writer.
+        return document;
     }
 
     private Document createDocument(Integer id, String title, String message) {

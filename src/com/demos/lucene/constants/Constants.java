@@ -3,7 +3,8 @@ package com.demos.lucene.constants;
 public class Constants {
 
     public enum eAnalyzerType {STANDARD, SIMPLE, WHITE_SPACE}
-    public enum eOperation {ADD, MERGE, ADD_DOC, UPDATE_DOC, DELETE_DOC}
+
+    public enum eOperation {ADD, UPDATE_DOC, DELETE_DOC}
 
     public static final String INDEX_DIR_STANDARD = "/home/amjad/Desktop/Lucene Data/StandardAnalyzer";
     public static final String INDEX_DIR_SIMPLE = "/home/amjad/Desktop/Lucene Data/SimpleAnalyzer";
