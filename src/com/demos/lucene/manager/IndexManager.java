@@ -1,18 +1,18 @@
 package com.demos.lucene.manager;
 
+import com.demos.lucene.constants.Constants;
+import com.demos.lucene.factory.AnalyzerFactory;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import com.demos.lucene.factory.AnalyzerFactory;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.IndexSearcher;
-import com.demos.lucene.constants.Constants;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.store.FSDirectory;
 
 import java.io.IOException;
 import java.nio.file.Paths;

@@ -11,7 +11,7 @@ public class MainIndexer {
         try {
 
             Constants.eOperation operation = Constants.eOperation.ADD;
-            IndexManager.getInstance().initialize(Constants.INDEX_DIR_STANDARD, Constants.eAnalyzerType.STANDARD);
+            IndexManager.getInstance().initialize(Constants.INDEX_DIR_STANDARD, Constants.eAnalyzerType.CUSTOM);
 
             switch (operation) {
                 case ADD:

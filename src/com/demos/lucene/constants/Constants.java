@@ -2,7 +2,7 @@ package com.demos.lucene.constants;
 
 public class Constants {
 
-    public enum eAnalyzerType {STANDARD, SIMPLE, WHITE_SPACE}
+    public enum eAnalyzerType {STANDARD, SIMPLE, WHITE_SPACE, CUSTOM}
 
     public enum eOperation {ADD, ADD_DOC, UPDATE_DOC, DELETE_DOC}
 

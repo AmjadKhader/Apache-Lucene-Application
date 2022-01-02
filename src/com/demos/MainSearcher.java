@@ -24,7 +24,7 @@ public class MainSearcher {
         IndexSearcher searcher = SearcherManager.createSearcher(Constants.INDEX_DIR_STANDARD);
 
         //set analyzer type
-        QueryManager.getInstance().setAnalyzer(Constants.eAnalyzerType.STANDARD);
+        QueryManager.getInstance().setAnalyzer(Constants.eAnalyzerType.CUSTOM);
         QueryManager.getInstance().setSearcher(searcher);
 
         //Search by ID
