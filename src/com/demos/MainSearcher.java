@@ -81,6 +81,11 @@ public class MainSearcher {
         filterMap.put("holiday*", BooleanClause.Occur.MUST_NOT);
         filterMap.put("f*r", BooleanClause.Occur.MUST_NOT);
 
+        /**
+        // OR Operation example
+        filterMap.put("father", BooleanClause.Occur.SHOULD);
+        filterMap.put("holidays", BooleanClause.Occur.SHOULD); **/
+
         searchResult = QueryManager.getInstance().searchIndexBoolean(Constants.MESSAGE, MAX_DOC_NUMBER, filterMap);
         log.println("Boolean Results :: " + searchResult.totalHits);
 
