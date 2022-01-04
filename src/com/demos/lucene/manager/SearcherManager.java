@@ -11,14 +11,20 @@ import java.nio.file.Paths;
 
 public class SearcherManager {
 
+    private static IndexReader reader = null;
+
     private SearcherManager() {
     }
 
     public static IndexSearcher createSearcher(String indexDir) throws IOException {
         File dir = new File(indexDir);
         if (dir.exists()) {
-            IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexDir)));
+            reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexDir)));
             return new IndexSearcher(reader);
         } else throw new IOException("Input directory is not found");
+    }
+
+    public static IndexReader getReader(){
+        return reader;
     }
 }

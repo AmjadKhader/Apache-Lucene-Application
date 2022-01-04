@@ -15,24 +15,33 @@ import java.io.IOException;
 
 public class AnalyzerFactory {
 
+    private static Analyzer analyzer = null;
+
     private AnalyzerFactory() {
+    }
+
+    public static Analyzer getAnalyzer() {
+        return analyzer;
     }
 
     public static Analyzer createAnalyzer(Constants.eAnalyzerType analyzerType) throws IOException {
         switch (analyzerType) {
             case SIMPLE:
-                return new SimpleAnalyzer();
+                analyzer = new SimpleAnalyzer();
+                break;
             case STANDARD:
-                return new StandardAnalyzer();
+                analyzer = new StandardAnalyzer();
+                break;
             case WHITE_SPACE:
-                return new WhitespaceAnalyzer();
+                analyzer = new WhitespaceAnalyzer();
+                break;
             case CUSTOM:
-                return CustomAnalyzer.builder()
+                analyzer = CustomAnalyzer.builder()
                         .withTokenizer(StandardTokenizerFactory.class)
                         .addTokenFilter(LowerCaseFilterFactory.class)
                         .addTokenFilter(ArabicNormalizationFilterFactory.class)
                         .addTokenFilter(EnglishPossessiveFilterFactory.class).build();
         }
-        return null;
+        return analyzer;
     }
 }

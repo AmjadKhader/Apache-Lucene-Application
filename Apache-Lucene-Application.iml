@@ -11,5 +11,8 @@
     <orderEntry type="library" name="lucene-analyzers-common-8.11.1" level="project" />
     <orderEntry type="library" name="lucene-core-8.11.1" level="project" />
     <orderEntry type="library" name="lucene-queryparser-8.11.1" level="project" />
+    <orderEntry type="library" name="lucene-highlighter-8.11.1" level="project" />
+    <orderEntry type="library" name="lucene-memory-8.11.1" level="project" />
+    <orderEntry type="library" name="lucene-queries-8.11.1" level="project" />
   </component>
 </module>

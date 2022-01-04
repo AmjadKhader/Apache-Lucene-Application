@@ -3,16 +3,23 @@ package com.demos.lucene.manager;
 import com.demos.lucene.factory.AnalyzerFactory;
 import com.demos.lucene.constants.Constants;
 
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
+import org.apache.lucene.search.highlight.TokenSources;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 public class QueryManager {
 
@@ -38,43 +45,85 @@ public class QueryManager {
         this.analyzer = analyzerType;
     }
 
-    public TopDocs searchIndex(String searchTerm, int maxDocumentNum, String field) throws IOException, ParseException {
-        QueryParser queryParser = new QueryParser(searchTerm, AnalyzerFactory.createAnalyzer(analyzer));
-        Query query = queryParser.parse(field);
+    public void searchAndPrint(String searchField, int maxDocumentNum, String searchTerm)
+            throws IOException, ParseException, InvalidTokenOffsetsException {
 
-        return searcher.search(query, maxDocumentNum);
+        print(searchIndex(searchField, maxDocumentNum, searchTerm), searcher,
+                HighlighterManager.getInstance().getHighlighter(searchTerm, searchField));
     }
 
-    public TopDocs searchIndexFuzzy(String searchTerm, int maxDocumentNum, String field, int degree) throws IOException {
-        FuzzyQuery fuzzyQuery = new FuzzyQuery(new Term(searchTerm, field), degree);
+    public void searchIndexFuzzy(String searchField, int maxDocumentNum, String searchTerm, int degree)
+            throws IOException, ParseException, InvalidTokenOffsetsException {
+        FuzzyQuery fuzzyQuery = new FuzzyQuery(new Term(searchField, searchTerm), degree);
         fuzzyQuery.setRewriteMethod(MultiTermQuery.CONSTANT_SCORE_REWRITE);
 
-        return searcher.search(fuzzyQuery, maxDocumentNum);
+        print(doSearch(fuzzyQuery, maxDocumentNum), searcher,
+                HighlighterManager.getInstance().getHighlighter(searchTerm, searchField));
     }
 
-    public TopDocs searchIndexPhrase(String searchTerm, int maxDocumentNum, String field) throws IOException {
-        List<String> terms = Arrays.asList(field.split(" "));
+    public void searchIndexPhrase(String searchField, int maxDocumentNum, String searchTerm)
+            throws IOException, ParseException, InvalidTokenOffsetsException {
+        List<String> terms = Arrays.asList(searchTerm.split(" "));
         PhraseQuery.Builder builder = new PhraseQuery.Builder();
-        terms.forEach((f -> builder.add(new Term(searchTerm, f))));
+        terms.forEach((f -> builder.add(new Term(searchField, f))));
 
-        return searcher.search(builder.build(), maxDocumentNum);
+        print(doSearch(builder.build(), maxDocumentNum), searcher,
+                HighlighterManager.getInstance().getHighlighter(searchTerm, searchField));
     }
 
-    public TopDocs searchIndexBoolean(String searchTerm, int maxDocumentNum, Map<String, BooleanClause.Occur> filterMap) throws IOException {
-        QueryParser queryParser = new QueryParser(searchTerm, AnalyzerFactory.createAnalyzer(analyzer));
+    public void searchIndexBoolean(String searchField, int maxDocumentNum, Map<String, BooleanClause.Occur> filterMap)
+            throws IOException, ParseException, InvalidTokenOffsetsException {
+        QueryParser queryParser = new QueryParser(searchField, AnalyzerFactory.createAnalyzer(analyzer));
         BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
+        final String[] highlightedText = {""};
 
         filterMap.forEach((name, occur) -> {
             Query query = null;
             try {
                 query = queryParser.parse(name);
+                if (occur.equals(BooleanClause.Occur.MUST) || occur.equals(BooleanClause.Occur.SHOULD)) {
+                    highlightedText[0] += " " + name;
+                }
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-
             booleanQuery.add(query, occur);
         });
 
-        return searcher.search(booleanQuery.build(), maxDocumentNum);
+        print(doSearch(booleanQuery.build(), maxDocumentNum), searcher,
+                HighlighterManager.getInstance().getHighlighter(highlightedText[0], searchField));
+    }
+
+    public TopDocs searchIndex(String searchField, int maxDocumentNum, String searchTerm)
+            throws IOException, ParseException {
+        QueryParser queryParser = new QueryParser(searchField, AnalyzerFactory.createAnalyzer(analyzer));
+        Query query = queryParser.parse(searchTerm);
+
+        return doSearch(query, maxDocumentNum);
+    }
+
+    public TopDocs doSearch(Query query, int maxDocumentNum) throws IOException {
+        return searcher.search(query, maxDocumentNum);
+    }
+
+    private static void print(TopDocs searchResult, IndexSearcher searcher, Highlighter highlighter)
+            throws IOException, InvalidTokenOffsetsException {
+
+        for (ScoreDoc scoreDoc : searchResult.scoreDocs) {
+            Document document = searcher.doc(scoreDoc.doc);
+
+            log.println(document.get(Constants.ID));
+            log.println(document.get(Constants.TITLE));
+            log.println(document.get(Constants.MESSAGE));
+            log.println("-------------------------------");
+
+            //Create token stream
+            TokenStream stream = TokenSources.getAnyTokenStream(SearcherManager.getReader(), scoreDoc.doc, Constants.MESSAGE, AnalyzerFactory.createAnalyzer(Constants.eAnalyzerType.STANDARD));
+
+            //Get highlighted text fragments
+            String[] frags = highlighter.getBestFragments(stream, document.get(Constants.MESSAGE), document.get(Constants.MESSAGE).length());
+            log.println(Arrays.toString(frags));
+        }
+        log.println("===========================================");
     }
 }

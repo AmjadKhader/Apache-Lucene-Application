@@ -12,6 +12,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.apache.lucene.store.FSDirectory;
 
 import java.io.IOException;
@@ -68,7 +69,7 @@ public class IndexManager {
         indexWriter.commit(); // try with resource will close the writer.
     }
 
-    public void deleteDocument(String documentId) throws IOException, ParseException {
+    public void deleteDocument(String documentId) throws IOException, ParseException, InvalidTokenOffsetsException {
         Document document = getDocument(ID, documentId);
 
         if (!Objects.isNull(document)) {
@@ -77,7 +78,8 @@ public class IndexManager {
         }
     }
 
-    public void updateDocument(String term, String oldValue, String newValue) throws IOException, ParseException {
+    public void updateDocument(String term, String oldValue, String newValue)
+            throws IOException, ParseException, InvalidTokenOffsetsException {
         Document document = getDocument(term, oldValue);
 
         if (!Objects.isNull(document)) {
@@ -99,7 +101,7 @@ public class IndexManager {
         indexWriter.commit();
     }
 
-    private Document getDocument(String term, String value) throws IOException, ParseException {
+    private Document getDocument(String term, String value) throws IOException, ParseException, InvalidTokenOffsetsException {
         Document document = null;
         IndexSearcher searcher = SearcherManager.createSearcher(Constants.INDEX_DIR_STANDARD);
         QueryManager.getInstance().setSearcher(searcher);
@@ -113,8 +115,8 @@ public class IndexManager {
     private Document createDocument(Integer id, String title, String message) {
         Document document = new Document();
 
-        document.add(new StringField(ID, id.toString(), Field.Store.YES));
-        document.add(new StringField(TITLE, title, Field.Store.YES));
+        document.add(new TextField(ID, id.toString(), Field.Store.YES)); // Tokenize -> will be analyzed
+        document.add(new TextField(TITLE, title, Field.Store.YES)); // Tokenize -> will be analyzed
         document.add(new TextField(MESSAGE, message, Field.Store.YES)); // Tokenize -> will be analyzed
 
         return document;
