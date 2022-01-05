@@ -50,17 +50,17 @@ public class IndexManager {
     public void createIndex() throws IOException {
         List<Document> documents = new ArrayList<>();
 
-        Document document1 = createDocument(1, "my father", "My father is coming for the holidays to make cookies");
-        Document document2 = createDocument(2, "cookies", "It takes an hour to make cookie in the holidays");
-        Document document3 = createDocument(3, "asking", "What is your father doing?");
-        Document document4 = createDocument(4, "cooking cookies", "It takes an hour to make cookie");
-        Document document5 = createDocument(5, "my father's cookies", "My father makes awesome cookie");
+        Document document1 = createDocument(1, "my father", "My-father is coming for the holidays to make cookies");
+//        Document document2 = createDocument(2, "cookies", "It takes an hour to make cookie in the holidays");
+//        Document document3 = createDocument(3, "asking", "What is your father doing?");
+//        Document document4 = createDocument(4, "cooking cookies", "It takes an hour to make cookie");
+//        Document document5 = createDocument(5, "my father's cookies", "My father makes awesome cookie");
 
         documents.add(document1);
-        documents.add(document2);
-        documents.add(document3);
-        documents.add(document4);
-        documents.add(document5);
+//        documents.add(document2);
+//        documents.add(document3);
+//        documents.add(document4);
+//        documents.add(document5);
 
         //Let's clean everything first
         indexWriter.deleteAll();

@@ -1,6 +1,6 @@
 package com.demos;
 
-import com.demos.lucene.QueryFilters;
+import com.demos.roles.QueryRole;
 import com.demos.lucene.constants.Constants;
 import com.demos.lucene.manager.QueryManager;
 import com.demos.lucene.manager.SearcherManager;
@@ -20,7 +20,7 @@ public class MainSearcher {
         IndexSearcher searcher = SearcherManager.createSearcher(Constants.INDEX_DIR_STANDARD);
 
         //set analyzer type
-        QueryManager.getInstance().setAnalyzer(Constants.eAnalyzerType.STANDARD);
+        QueryManager.getInstance().setAnalyzer(Constants.eAnalyzerType.CUSTOM);
         QueryManager.getInstance().setSearcher(searcher);
 
         //Search by ID
@@ -37,7 +37,7 @@ public class MainSearcher {
 
         //Multiple Terms Query
         log.println("Multiple Terms Results :: ");
-        QueryManager.getInstance().searchAndPrint(Constants.MESSAGE, MAX_DOC_NUMBER, "your father");
+        QueryManager.getInstance().searchAndPrint(Constants.MESSAGE, MAX_DOC_NUMBER, "your man");
 
         //Wildcard Query
         log.println("Wildcard Results :: ");
@@ -56,9 +56,9 @@ public class MainSearcher {
         QueryManager.getInstance().searchIndexPhrase(Constants.MESSAGE, MAX_DOC_NUMBER, "awesome cookie");
 
         //Boolean Query
-        Map<String, QueryFilters> termFilterMap = new HashMap<>();
-        termFilterMap.put("hour", QueryFilters.builder().boosting(0.6).occur(BooleanClause.Occur.SHOULD).build());
-        termFilterMap.put("doing", QueryFilters.builder().boosting(0.7).occur(BooleanClause.Occur.SHOULD).build());
+        Map<String, QueryRole> termFilterMap = new HashMap<>();
+        termFilterMap.put("hour", QueryRole.builder().boosting(0.6).occur(BooleanClause.Occur.SHOULD).build());
+        termFilterMap.put("doing", QueryRole.builder().boosting(0.7).occur(BooleanClause.Occur.SHOULD).build());
 
         log.println("Boolean Results :: ");
         QueryManager.getInstance().searchIndexBoolean(Constants.MESSAGE, MAX_DOC_NUMBER, termFilterMap);

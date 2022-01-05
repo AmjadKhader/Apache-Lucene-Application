@@ -1,6 +1,6 @@
 package com.demos.lucene.manager;
 
-import com.demos.lucene.QueryFilters;
+import com.demos.roles.QueryRole;
 import com.demos.lucene.factory.AnalyzerFactory;
 import com.demos.lucene.constants.Constants;
 
@@ -72,7 +72,7 @@ public class QueryManager {
                 HighlighterManager.getInstance().getHighlighter(searchTerm, searchField));
     }
 
-    public void searchIndexBoolean(String searchField, int maxDocumentNum, Map<String, QueryFilters> filterMap)
+    public void searchIndexBoolean(String searchField, int maxDocumentNum, Map<String, QueryRole> filterMap)
             throws IOException, ParseException, InvalidTokenOffsetsException {
 
         // Create and initialize boolean query
@@ -95,22 +95,22 @@ public class QueryManager {
         return searcher.search(query, maxDocumentNum);
     }
 
-    private BooleanQuery.Builder buildBooleanQuery(Map<String, QueryFilters> filterMap, String[] highlightedText, QueryParser queryParser) {
+    private BooleanQuery.Builder buildBooleanQuery(Map<String, QueryRole> filterMap, String[] highlightedText, QueryParser queryParser) {
         BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
 
-        filterMap.forEach((name, queryFilters) -> {
+        filterMap.forEach((name, queryRole) -> {
             Query query = null;
             try {
                 query = queryParser.parse(name);
 
                 // If the rule is MUST OR SHOULD, the text will be highlighted.
-                if (queryFilters.getOccur().equals(BooleanClause.Occur.MUST)
-                        || queryFilters.getOccur().equals(BooleanClause.Occur.SHOULD)) {
+                if (queryRole.getOccur().equals(BooleanClause.Occur.MUST)
+                        || queryRole.getOccur().equals(BooleanClause.Occur.SHOULD)) {
 
                     highlightedText[0] += " " + name;
                 }
 
-                booleanQuery.add(new BoostQuery(query, (float) queryFilters.getBoosting()), queryFilters.getOccur());
+                booleanQuery.add(new BoostQuery(query, (float) queryRole.getBoosting()), queryRole.getOccur());
 
             } catch (ParseException e) {
                 e.printStackTrace();

@@ -1,15 +1,11 @@
 package com.demos.lucene.factory;
 
-import org.apache.lucene.analysis.Analyzer;
+import com.demos.lucene.analyzer.TextAnalyzer;
 import com.demos.lucene.constants.Constants;
-import org.apache.lucene.analysis.ar.ArabicNormalizationFilterFactory;
-import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
-import org.apache.lucene.analysis.custom.CustomAnalyzer;
-import org.apache.lucene.analysis.en.EnglishPossessiveFilterFactory;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -29,7 +25,7 @@ public class AnalyzerFactory {
         return analyzer;
     }
 
-    public static Analyzer createAnalyzer(Constants.eAnalyzerType analyzerType) throws IOException {
+    public static Analyzer createAnalyzer(Constants.eAnalyzerType analyzerType) {
         switch (analyzerType) {
             case SIMPLE:
                 analyzer = new SimpleAnalyzer();
@@ -41,12 +37,9 @@ public class AnalyzerFactory {
                 analyzer = new WhitespaceAnalyzer();
                 break;
             case CUSTOM:
-                analyzer = CustomAnalyzer.builder()
-                        .withTokenizer(StandardTokenizerFactory.class)
-                        .addTokenFilter(LowerCaseFilterFactory.class)
-                        .addTokenFilter(ArabicNormalizationFilterFactory.class)
-                        .addTokenFilter(EnglishPossessiveFilterFactory.class).build();
+                analyzer = new TextAnalyzer();
         }
+
         return analyzer;
     }
 }
