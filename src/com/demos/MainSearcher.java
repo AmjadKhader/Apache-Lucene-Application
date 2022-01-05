@@ -58,7 +58,7 @@ public class MainSearcher {
         Map<String, BooleanClause.Occur> filterMap = new HashMap<>();
         filterMap.put("cook*", BooleanClause.Occur.MUST);
         filterMap.put("holiday*", BooleanClause.Occur.MUST_NOT);
-        filterMap.put("f*r", BooleanClause.Occur.SHOULD);
+        filterMap.put("f*r", BooleanClause.Occur.SHOULD); // will be given a higher score if found.
 
         /**
          // OR Operation example

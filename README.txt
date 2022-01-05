@@ -1,3 +1,6 @@
+Apache Lucene is a full-text search library, has operated and been maintained for more than 20 years and for many developers is an integral part of their website and application builds.
+Essentially Apache Lucene is a full-text search engine software library that provides a Java-based search and indexing platform.
+
 This is a sample Lucene application for:
 1- Create new documents
 2- Create new index
