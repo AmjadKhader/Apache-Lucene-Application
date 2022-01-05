@@ -6,6 +6,7 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.highlight.*;
 
+import java.io.IOException;
 import java.util.Objects;
 
 public class HighlighterManager {
@@ -22,7 +23,8 @@ public class HighlighterManager {
         return instance;
     }
 
-    public Highlighter getHighlighter(String wordToHighlight, String searchField) throws ParseException {
+    public Highlighter getHighlighter(String wordToHighlight, String searchField)
+            throws ParseException, IOException {
 
         Query query = new QueryParser(searchField, AnalyzerFactory.getAnalyzer()).parse(wordToHighlight);
         QueryScorer scorer = new QueryScorer(query);

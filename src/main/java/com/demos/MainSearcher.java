@@ -1,5 +1,6 @@
 package com.demos;
 
+import com.demos.lucene.QueryFilters;
 import com.demos.lucene.constants.Constants;
 import com.demos.lucene.manager.QueryManager;
 import com.demos.lucene.manager.SearcherManager;
@@ -55,17 +56,11 @@ public class MainSearcher {
         QueryManager.getInstance().searchIndexPhrase(Constants.MESSAGE, MAX_DOC_NUMBER, "awesome cookie");
 
         //Boolean Query
-        Map<String, BooleanClause.Occur> filterMap = new HashMap<>();
-        filterMap.put("cook*", BooleanClause.Occur.MUST);
-        filterMap.put("holiday*", BooleanClause.Occur.MUST_NOT);
-        filterMap.put("f*r", BooleanClause.Occur.SHOULD); // will be given a higher score if found.
-
-        /**
-         // OR Operation example
-         filterMap.put("father", BooleanClause.Occur.SHOULD);
-         filterMap.put("holidays", BooleanClause.Occur.SHOULD); **/
+        Map<String, QueryFilters> termFilterMap = new HashMap<>();
+        termFilterMap.put("hour", QueryFilters.builder().boosting(0.6).occur(BooleanClause.Occur.SHOULD).build());
+        termFilterMap.put("doing", QueryFilters.builder().boosting(0.7).occur(BooleanClause.Occur.SHOULD).build());
 
         log.println("Boolean Results :: ");
-        QueryManager.getInstance().searchIndexBoolean(Constants.MESSAGE, MAX_DOC_NUMBER, filterMap);
+        QueryManager.getInstance().searchIndexBoolean(Constants.MESSAGE, MAX_DOC_NUMBER, termFilterMap);
     }
 }

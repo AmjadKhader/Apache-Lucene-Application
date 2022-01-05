@@ -1,5 +1,6 @@
 package com.demos.lucene.manager;
 
+import com.demos.lucene.QueryFilters;
 import com.demos.lucene.factory.AnalyzerFactory;
 import com.demos.lucene.constants.Constants;
 
@@ -71,27 +72,15 @@ public class QueryManager {
                 HighlighterManager.getInstance().getHighlighter(searchTerm, searchField));
     }
 
-    public void searchIndexBoolean(String searchField, int maxDocumentNum, Map<String, BooleanClause.Occur> filterMap)
+    public void searchIndexBoolean(String searchField, int maxDocumentNum, Map<String, QueryFilters> filterMap)
             throws IOException, ParseException, InvalidTokenOffsetsException {
-        QueryParser queryParser = new QueryParser(searchField, AnalyzerFactory.createAnalyzer(analyzer));
-        BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
+
+        // Create and initialize boolean query
         final String[] highlightedText = {""};
+        BooleanQuery.Builder booleanQuery = buildBooleanQuery(filterMap, highlightedText, new QueryParser(searchField, AnalyzerFactory.getAnalyzer()));
 
-        filterMap.forEach((name, occur) -> {
-            Query query = null;
-            try {
-                query = queryParser.parse(name);
-                if (occur.equals(BooleanClause.Occur.MUST) || occur.equals(BooleanClause.Occur.SHOULD)) {
-                    highlightedText[0] += " " + name;
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            booleanQuery.add(query, occur);
-        });
-
-        print(doSearch(booleanQuery.build(), maxDocumentNum), searcher,
-                HighlighterManager.getInstance().getHighlighter(highlightedText[0], searchField));
+        print(doSearch(booleanQuery.build(), maxDocumentNum),
+                searcher, HighlighterManager.getInstance().getHighlighter(highlightedText[0], searchField));
     }
 
     public TopDocs searchIndex(String searchField, int maxDocumentNum, String searchTerm)
@@ -104,6 +93,31 @@ public class QueryManager {
 
     public TopDocs doSearch(Query query, int maxDocumentNum) throws IOException {
         return searcher.search(query, maxDocumentNum);
+    }
+
+    private BooleanQuery.Builder buildBooleanQuery(Map<String, QueryFilters> filterMap, String[] highlightedText, QueryParser queryParser) {
+        BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
+
+        filterMap.forEach((name, queryFilters) -> {
+            Query query = null;
+            try {
+                query = queryParser.parse(name);
+
+                // If the rule is MUST OR SHOULD, the text will be highlighted.
+                if (queryFilters.getOccur().equals(BooleanClause.Occur.MUST)
+                        || queryFilters.getOccur().equals(BooleanClause.Occur.SHOULD)) {
+
+                    highlightedText[0] += " " + name;
+                }
+
+                booleanQuery.add(new BoostQuery(query, (float) queryFilters.getBoosting()), queryFilters.getOccur());
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return booleanQuery;
     }
 
     private static void print(TopDocs searchResult, IndexSearcher searcher, Highlighter highlighter)

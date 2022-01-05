@@ -1,0 +1,9 @@
+/home/amjad/IdeaProjects/Apache-Lucene-Application/src/main/java/com/demos/lucene/constants/Constants.java
+/home/amjad/IdeaProjects/Apache-Lucene-Application/src/main/java/com/demos/lucene/manager/HighlighterManager.java
+/home/amjad/IdeaProjects/Apache-Lucene-Application/src/main/java/com/demos/lucene/manager/SearcherManager.java
+/home/amjad/IdeaProjects/Apache-Lucene-Application/src/main/java/com/demos/lucene/QueryFilters.java
+/home/amjad/IdeaProjects/Apache-Lucene-Application/src/main/java/com/demos/MainSearcher.java
+/home/amjad/IdeaProjects/Apache-Lucene-Application/src/main/java/com/demos/lucene/factory/AnalyzerFactory.java
+/home/amjad/IdeaProjects/Apache-Lucene-Application/src/main/java/com/demos/lucene/manager/QueryManager.java
+/home/amjad/IdeaProjects/Apache-Lucene-Application/src/main/java/com/demos/lucene/manager/IndexManager.java
+/home/amjad/IdeaProjects/Apache-Lucene-Application/src/main/java/com/demos/MainIndexer.java

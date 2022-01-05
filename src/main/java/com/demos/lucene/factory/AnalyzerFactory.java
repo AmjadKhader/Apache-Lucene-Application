@@ -12,6 +12,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class AnalyzerFactory {
 
@@ -20,7 +21,11 @@ public class AnalyzerFactory {
     private AnalyzerFactory() {
     }
 
-    public static Analyzer getAnalyzer() {
+    public static Analyzer getAnalyzer() throws IOException {
+        if (Objects.isNull(analyzer)) {
+            analyzer = createAnalyzer(Constants.eAnalyzerType.STANDARD); // the default analyzer.
+        }
+
         return analyzer;
     }
 
