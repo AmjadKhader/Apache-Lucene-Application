@@ -19,7 +19,7 @@ This README file only contains basic setup instructions.  For more comprehensive
 We'll assume that you know how to get and set up the JDK - if you
 don't, then we suggest starting at https://jdk.java.net/ and learning
 more about Java, before returning to this README. Lucene runs with
-Java 8 or later.
+Java 8 or later. Also, Lombok plugin is required. 
 
 ### Step 1) Checkout/Download Lucene source code
 
