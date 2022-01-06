@@ -10,6 +10,9 @@ public class Constants {
     public static final String INDEX_DIR_SIMPLE = "/home/amjad/Desktop/Lucene Data/SimpleAnalyzer";
     public static final String INDEX_DIR_WHITE = "/home/amjad/Desktop/Lucene Data/WhiteAnalyzer";
 
+    public static final String STOPWORDS = "/home/amjad/Desktop/Lucene Data/stopwords.txt";
+    public static final String SYNONYM = "/home/amjad/Desktop/Lucene Data/synonym.txt";
+
     public static final String ID = "id";
     public static final String TITLE = "title";
     public static final String MESSAGE = "message";

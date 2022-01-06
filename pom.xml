@@ -43,6 +43,12 @@
             <artifactId>lucene-memory</artifactId>
             <version>8.11.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
     <build>

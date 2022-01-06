@@ -1,6 +1,6 @@
 package com.demos.lucene.manager;
 
-import com.demos.roles.QueryRole;
+import com.demos.lucene.roles.QueryRole;
 import com.demos.lucene.factory.AnalyzerFactory;
 import com.demos.lucene.constants.Constants;
 
@@ -24,7 +24,6 @@ import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 public class QueryManager {
 
-    private Constants.eAnalyzerType analyzer = Constants.eAnalyzerType.STANDARD;
     private static QueryManager instance = null;
     private IndexSearcher searcher = null;
 
@@ -40,10 +39,6 @@ public class QueryManager {
 
     public void setSearcher(IndexSearcher searcher) {
         this.searcher = searcher;
-    }
-
-    public void setAnalyzer(Constants.eAnalyzerType analyzerType) {
-        this.analyzer = analyzerType;
     }
 
     public void searchAndPrint(String searchField, int maxDocumentNum, String searchTerm)
@@ -85,7 +80,7 @@ public class QueryManager {
 
     public TopDocs searchIndex(String searchField, int maxDocumentNum, String searchTerm)
             throws IOException, ParseException {
-        QueryParser queryParser = new QueryParser(searchField, AnalyzerFactory.createAnalyzer(analyzer));
+        QueryParser queryParser = new QueryParser(searchField, AnalyzerFactory.getAnalyzer());
         Query query = queryParser.parse(searchTerm);
 
         return doSearch(query, maxDocumentNum);

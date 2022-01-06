@@ -2,6 +2,12 @@ package com.demos.lucene.manager;
 
 import com.demos.lucene.constants.Constants;
 import com.demos.lucene.factory.AnalyzerFactory;
+import org.apache.lucene.analysis.core.WhitespaceTokenizer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.standard.StandardTokenizer;
+import org.apache.lucene.analysis.synonym.SynonymFilter;
+import org.apache.lucene.analysis.synonym.SynonymGraphFilter;
+import org.apache.lucene.analysis.synonym.SynonymMap;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -14,6 +20,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.CharsRef;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -50,26 +57,28 @@ public class IndexManager {
     public void createIndex() throws IOException {
         List<Document> documents = new ArrayList<>();
 
-        Document document1 = createDocument(1, "my father", "My-father is coming for the holidays to make cookies");
-//        Document document2 = createDocument(2, "cookies", "It takes an hour to make cookie in the holidays");
-//        Document document3 = createDocument(3, "asking", "What is your father doing?");
-//        Document document4 = createDocument(4, "cooking cookies", "It takes an hour to make cookie");
-//        Document document5 = createDocument(5, "my father's cookies", "My father makes awesome cookie");
+        Document document1 = createDocument(1, "my father", "My-father is COMING for the holidays to make cookies");
+        Document document2 = createDocument(2, "cookies", "It takes an hour to make cookie in the holidays");
+        Document document3 = createDocument(3, "asking", "What is your father doing?");
+        Document document4 = createDocument(4, "cooking cookies", "It takes an hour to make cookie");
+        Document document5 = createDocument(5, "my father's cookies", "My father makes awesome cookie");
 
         documents.add(document1);
-//        documents.add(document2);
-//        documents.add(document3);
-//        documents.add(document4);
-//        documents.add(document5);
+        documents.add(document2);
+        documents.add(document3);
+        documents.add(document4);
+        documents.add(document5);
 
         //Let's clean everything first
         indexWriter.deleteAll();
 
         indexWriter.addDocuments(documents);
-        indexWriter.commit(); // try with resource will close the writer.
+
+        indexWriter.prepareCommit();
+        indexWriter.commit();
     }
 
-    public void deleteDocument(String documentId) throws IOException, ParseException, InvalidTokenOffsetsException {
+    public void deleteDocument(String documentId) throws IOException, ParseException {
         Document document = getDocument(ID, documentId);
 
         if (!Objects.isNull(document)) {
@@ -79,7 +88,7 @@ public class IndexManager {
     }
 
     public void updateDocument(String term, String oldValue, String newValue)
-            throws IOException, ParseException, InvalidTokenOffsetsException {
+            throws IOException, ParseException {
         Document document = getDocument(term, oldValue);
 
         if (!Objects.isNull(document)) {
@@ -101,7 +110,7 @@ public class IndexManager {
         indexWriter.commit();
     }
 
-    private Document getDocument(String term, String value) throws IOException, ParseException, InvalidTokenOffsetsException {
+    private Document getDocument(String term, String value) throws IOException, ParseException {
         Document document = null;
         IndexSearcher searcher = SearcherManager.createSearcher(Constants.INDEX_DIR_STANDARD);
         QueryManager.getInstance().setSearcher(searcher);
@@ -115,8 +124,8 @@ public class IndexManager {
     private Document createDocument(Integer id, String title, String message) {
         Document document = new Document();
 
-        document.add(new TextField(ID, id.toString(), Field.Store.YES)); // Tokenize -> will be analyzed
-        document.add(new TextField(TITLE, title, Field.Store.YES)); // Tokenize -> will be analyzed
+        document.add(new StringField(ID, id.toString(), Field.Store.YES));
+        document.add(new StringField(TITLE, title, Field.Store.YES));
         document.add(new TextField(MESSAGE, message, Field.Store.YES)); // Tokenize -> will be analyzed
 
         return document;

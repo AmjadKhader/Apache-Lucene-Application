@@ -1,4 +1,4 @@
-package com.demos.roles;
+package com.demos.lucene.roles;
 
 import lombok.Builder;
 import lombok.Data;

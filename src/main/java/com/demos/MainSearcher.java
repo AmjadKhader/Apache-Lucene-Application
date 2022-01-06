@@ -1,6 +1,7 @@
 package com.demos;
 
-import com.demos.roles.QueryRole;
+import com.demos.lucene.factory.AnalyzerFactory;
+import com.demos.lucene.roles.QueryRole;
 import com.demos.lucene.constants.Constants;
 import com.demos.lucene.manager.QueryManager;
 import com.demos.lucene.manager.SearcherManager;
@@ -20,7 +21,7 @@ public class MainSearcher {
         IndexSearcher searcher = SearcherManager.createSearcher(Constants.INDEX_DIR_STANDARD);
 
         //set analyzer type
-        QueryManager.getInstance().setAnalyzer(Constants.eAnalyzerType.CUSTOM);
+        AnalyzerFactory.createAnalyzer(Constants.eAnalyzerType.CUSTOM);
         QueryManager.getInstance().setSearcher(searcher);
 
         //Search by ID
@@ -33,11 +34,11 @@ public class MainSearcher {
 
         //Term Query
         log.println("Terms Results :: ");
-        QueryManager.getInstance().searchAndPrint(Constants.MESSAGE, MAX_DOC_NUMBER, "cookies");
+        QueryManager.getInstance().searchAndPrint(Constants.MESSAGE, MAX_DOC_NUMBER, "coming"); // this word is used as an example of StopWords
 
         //Multiple Terms Query
         log.println("Multiple Terms Results :: ");
-        QueryManager.getInstance().searchAndPrint(Constants.MESSAGE, MAX_DOC_NUMBER, "your man");
+        QueryManager.getInstance().searchAndPrint(Constants.MESSAGE, MAX_DOC_NUMBER, "your man"); // father has been used as an example of Synonym
 
         //Wildcard Query
         log.println("Wildcard Results :: ");
