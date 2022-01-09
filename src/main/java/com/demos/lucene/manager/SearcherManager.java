@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 public class SearcherManager {
 
     /**
-     * This Singleton class is responsible for creating and ##IndexReader to read the index based on the analyzer
+     * This class is responsible for creating and ##IndexReader to read the index based on the analyzer
      **/
 
     private static IndexReader reader = null;

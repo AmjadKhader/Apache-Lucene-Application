@@ -1,12 +1,11 @@
 package com.demos;
 
 import com.demos.lucene.constants.Constants;
+import com.demos.lucene.entites.MessageDocument;
 import com.demos.lucene.factory.AnalyzerFactory;
 import com.demos.lucene.manager.IndexManager;
 
 import java.nio.file.FileSystemNotFoundException;
-
-import static com.demos.lucene.constants.Constants.ID;
 
 public class MainIndexer {
 
@@ -21,14 +20,21 @@ public class MainIndexer {
                     IndexManager.getInstance().createIndex();
                     break;
                 case DELETE_DOC:
-                    IndexManager.getInstance().deleteDocument("1");
+                    IndexManager.getInstance().deleteDocument(Constants.ID, "1");
                     break;
                 case UPDATE_DOC:
-                    IndexManager.getInstance().updateDocument(ID, "asking", "amjad");
+                    IndexManager.getInstance().updateDocument(MessageDocument.builder()
+                            .documentId("3")
+                            .title("amjad")
+                            .description("What is your father doing?")
+                            .build());
                     break;
                 case ADD_DOC:
-                    IndexManager.getInstance().addDocument("6", "custom",
-                            "this message is to test cookies and holiday indexes for my father");
+                    IndexManager.getInstance().addDocument(MessageDocument.builder()
+                            .documentId("6")
+                            .title("custom")
+                            .description("this message is to test cookies and holiday indexes for my father")
+                            .build());
                     break;
                 default:
                     throw new FileSystemNotFoundException("Wrong input");

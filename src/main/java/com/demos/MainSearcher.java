@@ -1,17 +1,16 @@
 package com.demos;
 
-import com.demos.lucene.factory.AnalyzerFactory;
-import com.demos.lucene.roles.QueryRole;
 import com.demos.lucene.constants.Constants;
+import com.demos.lucene.factory.AnalyzerFactory;
 import com.demos.lucene.manager.QueryManager;
 import com.demos.lucene.manager.SearcherManager;
+import com.demos.lucene.roles.QueryRole;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.IndexSearcher;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.demos.lucene.constants.Constants.MAX_DOC_NUMBER;
 import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 public class MainSearcher {
@@ -26,35 +25,35 @@ public class MainSearcher {
 
         //Search by ID
         log.println("Search by Id Results : ");
-        QueryManager.getInstance().searchAndPrint(Constants.ID, MAX_DOC_NUMBER, "1");
+        QueryManager.getInstance().searchAndPrint(Constants.ID, "1",false);
 
         //Search by Title
         log.println("Search by Title Results : ");
-        QueryManager.getInstance().searchAndPrint(Constants.TITLE, MAX_DOC_NUMBER, "asking");
+        QueryManager.getInstance().searchAndPrint(Constants.TITLE, "asking",false);
 
         //Term Query
         log.println("Terms Results :: ");
-        QueryManager.getInstance().searchAndPrint(Constants.MESSAGE, MAX_DOC_NUMBER, "coming"); // this word is used as an example of StopWords
+        QueryManager.getInstance().searchAndPrint(Constants.MESSAGE, "coming",true); // this word is used as an example of StopWords
 
         //Multiple Terms Query
         log.println("Multiple Terms Results :: ");
-        QueryManager.getInstance().searchAndPrint(Constants.MESSAGE, MAX_DOC_NUMBER, "your man"); // father has been used as an example of Synonym
+        QueryManager.getInstance().searchAndPrint(Constants.MESSAGE, "your man",true); // father has been used as an example of Synonym
 
         //Wildcard Query
         log.println("Wildcard Results :: ");
-        QueryManager.getInstance().searchAndPrint(Constants.MESSAGE, MAX_DOC_NUMBER, "f*r");
+        QueryManager.getInstance().searchAndPrint(Constants.MESSAGE, "f*r",true);
 
         //Prefix Query
         log.println("Prefix Results :: ");
-        QueryManager.getInstance().searchAndPrint(Constants.MESSAGE, MAX_DOC_NUMBER, "cook*");
+        QueryManager.getInstance().searchAndPrint(Constants.MESSAGE, "cook*",true);
 
         //Fuzzy Query
         log.println("Fuzzy Results :: ");
-        QueryManager.getInstance().searchIndexFuzzy(Constants.MESSAGE, MAX_DOC_NUMBER, "holida*", 2);
+        QueryManager.getInstance().searchIndexFuzzy(Constants.MESSAGE, "holida*", 2);
 
         //Phrase Query
         log.println("Phrase Results :: ");
-        QueryManager.getInstance().searchIndexPhrase(Constants.MESSAGE, MAX_DOC_NUMBER, "awesome cookie");
+        QueryManager.getInstance().searchIndexPhrase(Constants.MESSAGE, "awesome cookie");
 
         //Boolean Query
         Map<String, QueryRole> termFilterMap = new HashMap<>();
@@ -62,6 +61,6 @@ public class MainSearcher {
         termFilterMap.put("doing", QueryRole.builder().boosting(0.7).occur(BooleanClause.Occur.SHOULD).build());
 
         log.println("Boolean Results :: ");
-        QueryManager.getInstance().searchIndexBoolean(Constants.MESSAGE, MAX_DOC_NUMBER, termFilterMap);
+        QueryManager.getInstance().searchIndexBoolean(Constants.MESSAGE, termFilterMap);
     }
 }

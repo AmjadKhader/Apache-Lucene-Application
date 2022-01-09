@@ -1,14 +1,13 @@
 package com.demos.lucene.manager;
 
-import com.demos.lucene.roles.QueryRole;
-import com.demos.lucene.factory.AnalyzerFactory;
 import com.demos.lucene.constants.Constants;
-
+import com.demos.lucene.factory.AnalyzerFactory;
+import com.demos.lucene.roles.QueryRole;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
@@ -27,10 +26,10 @@ public class QueryManager {
     /**
      * This Singleton class is responsible for creating ##IndexReader to read the index based on the analyzer
      * QueryManager exposes the following functionalities:
-     *      - Execute basic queries (prefix, wildcard, term, and multi-term)
-     *      - Execute fuzzy queries
-     *      - Execute phrase queries
-     *      - Execute boolean queries
+     * - Execute basic queries (prefix, wildcard, term, and multi-term)
+     * - Execute fuzzy queries
+     * - Execute phrase queries
+     * - Execute boolean queries
      **/
 
     private static QueryManager instance = null;
@@ -50,53 +49,57 @@ public class QueryManager {
         this.searcher = searcher;
     }
 
-    public void searchAndPrint(String searchField, int maxDocumentNum, String searchTerm)
+    public void searchAndPrint(String searchField, String searchTerm, boolean highlight)
             throws IOException, ParseException, InvalidTokenOffsetsException {
 
-        print(searchIndex(searchField, maxDocumentNum, searchTerm), searcher,
-                HighlighterManager.getInstance().getHighlighter(searchTerm, searchField));
+        if (highlight) {
+            print(searchIndex(searchField, searchTerm), searcher,
+                    HighlighterManager.getInstance().getHighlighter(searchTerm, searchField));
+        } else {
+            print(searchIndex(searchField, searchTerm), searcher);
+        }
     }
 
-    public void searchIndexFuzzy(String searchField, int maxDocumentNum, String searchTerm, int degree)
+    public void searchIndexFuzzy(String searchField, String searchTerm, int degree)
             throws IOException, ParseException, InvalidTokenOffsetsException {
         FuzzyQuery fuzzyQuery = new FuzzyQuery(new Term(searchField, searchTerm), degree);
         fuzzyQuery.setRewriteMethod(MultiTermQuery.CONSTANT_SCORE_REWRITE);
 
-        print(doSearch(fuzzyQuery, maxDocumentNum), searcher,
+        print(doSearch(fuzzyQuery), searcher,
                 HighlighterManager.getInstance().getHighlighter(searchTerm, searchField));
     }
 
-    public void searchIndexPhrase(String searchField, int maxDocumentNum, String searchTerm)
+    public void searchIndexPhrase(String searchField, String searchTerm)
             throws IOException, ParseException, InvalidTokenOffsetsException {
         List<String> terms = Arrays.asList(searchTerm.split(" "));
         PhraseQuery.Builder builder = new PhraseQuery.Builder();
         terms.forEach((f -> builder.add(new Term(searchField, f))));
 
-        print(doSearch(builder.build(), maxDocumentNum), searcher,
+        print(doSearch(builder.build()), searcher,
                 HighlighterManager.getInstance().getHighlighter(searchTerm, searchField));
     }
 
-    public void searchIndexBoolean(String searchField, int maxDocumentNum, Map<String, QueryRole> filterMap)
+    public void searchIndexBoolean(String searchField, Map<String, QueryRole> filterMap)
             throws IOException, ParseException, InvalidTokenOffsetsException {
 
         // Create and initialize boolean query
         final String[] highlightedText = {""};
         BooleanQuery.Builder booleanQuery = buildBooleanQuery(filterMap, highlightedText, new QueryParser(searchField, AnalyzerFactory.getAnalyzer()));
 
-        print(doSearch(booleanQuery.build(), maxDocumentNum),
-                searcher, HighlighterManager.getInstance().getHighlighter(highlightedText[0], searchField));
+        print(doSearch(booleanQuery.build()), searcher,
+                HighlighterManager.getInstance().getHighlighter(highlightedText[0], searchField));
     }
 
-    public TopDocs searchIndex(String searchField, int maxDocumentNum, String searchTerm)
+    public TopDocs searchIndex(String searchField, String searchTerm)
             throws IOException, ParseException {
         QueryParser queryParser = new QueryParser(searchField, AnalyzerFactory.getAnalyzer());
         Query query = queryParser.parse(searchTerm);
 
-        return doSearch(query, maxDocumentNum);
+        return doSearch(query);
     }
 
-    private TopDocs doSearch(Query query, int maxDocumentNum) throws IOException {
-        return searcher.search(query, maxDocumentNum);
+    private TopDocs doSearch(Query query) throws IOException {
+        return searcher.search(query, Constants.MAX_DOC_NUMBER);
     }
 
     private BooleanQuery.Builder buildBooleanQuery(Map<String, QueryRole> filterMap, String[] highlightedText, QueryParser queryParser) {
@@ -141,6 +144,19 @@ public class QueryManager {
             //Get highlighted text fragments
             String[] frags = highlighter.getBestFragments(stream, document.get(Constants.MESSAGE), document.get(Constants.MESSAGE).length());
             log.println(Arrays.toString(frags));
+        }
+        log.println("===========================================");
+    }
+
+    private static void print(TopDocs searchResult, IndexSearcher searcher) throws IOException {
+
+        for (ScoreDoc scoreDoc : searchResult.scoreDocs) {
+            Document document = searcher.doc(scoreDoc.doc);
+
+            log.println(document.get(Constants.ID));
+            log.println(document.get(Constants.TITLE));
+            log.println(document.get(Constants.MESSAGE));
+            log.println("-------------------------------");
         }
         log.println("===========================================");
     }
