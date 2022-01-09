@@ -11,11 +11,10 @@ import org.apache.lucene.search.IndexSearcher;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.demos.lucene.constants.Constants.MAX_DOC_NUMBER;
 import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 public class MainSearcher {
-
-    private static final int MAX_DOC_NUMBER = 10;
 
     public static void main(String[] args) throws Exception {
 

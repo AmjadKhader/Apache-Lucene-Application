@@ -16,4 +16,6 @@ public class Constants {
     public static final String ID = "id";
     public static final String TITLE = "title";
     public static final String MESSAGE = "message";
+
+    public static final int MAX_DOC_NUMBER = 10;
 }
