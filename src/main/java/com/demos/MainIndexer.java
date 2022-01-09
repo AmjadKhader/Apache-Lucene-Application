@@ -1,7 +1,10 @@
 package com.demos;
 
-import com.demos.lucene.manager.IndexManager;
 import com.demos.lucene.constants.Constants;
+import com.demos.lucene.factory.AnalyzerFactory;
+import com.demos.lucene.manager.IndexManager;
+
+import java.nio.file.FileSystemNotFoundException;
 
 import static com.demos.lucene.constants.Constants.ID;
 
@@ -11,7 +14,7 @@ public class MainIndexer {
         try {
 
             Constants.eOperation operation = Constants.eOperation.ADD;
-            IndexManager.getInstance().initialize(Constants.INDEX_DIR_STANDARD, Constants.eAnalyzerType.CUSTOM);
+            AnalyzerFactory.createAnalyzer(Constants.eAnalyzerType.CUSTOM);
 
             switch (operation) {
                 case ADD:
@@ -28,7 +31,7 @@ public class MainIndexer {
                             "this message is to test cookies and holiday indexes for my father");
                     break;
                 default:
-                    throw new RuntimeException("Wrong input");
+                    throw new FileSystemNotFoundException("Wrong input");
             }
         } catch (Exception exception) {
             exception.printStackTrace();

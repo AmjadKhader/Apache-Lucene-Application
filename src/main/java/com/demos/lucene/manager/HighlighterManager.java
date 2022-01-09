@@ -11,6 +11,10 @@ import java.util.Objects;
 
 public class HighlighterManager {
 
+    /**
+     * This Singleton class is responsible for creating and retrieving Highlighter for given word.
+     **/
+
     private static HighlighterManager instance;
 
     private HighlighterManager() {

@@ -18,10 +18,11 @@ public class MainSearcher {
     private static final int MAX_DOC_NUMBER = 10;
 
     public static void main(String[] args) throws Exception {
-        IndexSearcher searcher = SearcherManager.createSearcher(Constants.INDEX_DIR_STANDARD);
 
         //set analyzer type
         AnalyzerFactory.createAnalyzer(Constants.eAnalyzerType.CUSTOM);
+        IndexSearcher searcher = SearcherManager.createSearcher();
+
         QueryManager.getInstance().setSearcher(searcher);
 
         //Search by ID

@@ -24,6 +24,15 @@ import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 public class QueryManager {
 
+    /**
+     * This Singleton class is responsible for creating ##IndexReader to read the index based on the analyzer
+     * QueryManager exposes the following functionalities:
+     *      - Execute basic queries (prefix, wildcard, term, and multi-term)
+     *      - Execute fuzzy queries
+     *      - Execute phrase queries
+     *      - Execute boolean queries
+     **/
+
     private static QueryManager instance = null;
     private IndexSearcher searcher = null;
 
@@ -86,7 +95,7 @@ public class QueryManager {
         return doSearch(query, maxDocumentNum);
     }
 
-    public TopDocs doSearch(Query query, int maxDocumentNum) throws IOException {
+    private TopDocs doSearch(Query query, int maxDocumentNum) throws IOException {
         return searcher.search(query, maxDocumentNum);
     }
 
@@ -127,7 +136,7 @@ public class QueryManager {
             log.println("-------------------------------");
 
             //Create token stream
-            TokenStream stream = TokenSources.getAnyTokenStream(SearcherManager.getReader(), scoreDoc.doc, Constants.MESSAGE, AnalyzerFactory.createAnalyzer(Constants.eAnalyzerType.STANDARD));
+            TokenStream stream = TokenSources.getAnyTokenStream(SearcherManager.getReader(), scoreDoc.doc, Constants.MESSAGE, AnalyzerFactory.getAnalyzer());
 
             //Get highlighted text fragments
             String[] frags = highlighter.getBestFragments(stream, document.get(Constants.MESSAGE), document.get(Constants.MESSAGE).length());

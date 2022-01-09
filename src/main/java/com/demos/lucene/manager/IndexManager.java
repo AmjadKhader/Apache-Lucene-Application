@@ -2,12 +2,6 @@ package com.demos.lucene.manager;
 
 import com.demos.lucene.constants.Constants;
 import com.demos.lucene.factory.AnalyzerFactory;
-import org.apache.lucene.analysis.core.WhitespaceTokenizer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.analysis.standard.StandardTokenizer;
-import org.apache.lucene.analysis.synonym.SynonymFilter;
-import org.apache.lucene.analysis.synonym.SynonymGraphFilter;
-import org.apache.lucene.analysis.synonym.SynonymMap;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -18,12 +12,9 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.CharsRef;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +22,15 @@ import java.util.Objects;
 import static com.demos.lucene.constants.Constants.*;
 
 public class IndexManager {
+
+    /**
+     * This Singleton class manages the index.
+     * IndexManager is responsible for:
+     *      - Creating new index.
+     *      - Add document to index.
+     *      - Delete document from index.
+     *      - Update document in index by field.
+     **/
 
     private static IndexManager instance = null;
     private IndexWriter indexWriter = null;
@@ -45,10 +45,10 @@ public class IndexManager {
         return instance;
     }
 
-    public void initialize(String directoryStr, Constants.eAnalyzerType analyzerType) throws IOException {
-        FSDirectory directory = FSDirectory.open(Paths.get(directoryStr)); // this should be open.
+    public void setAnalyzerType(Constants.eAnalyzerType analyzerType) throws IOException {
+        FSDirectory directory = DirectoryManager.getDirectory(analyzerType);
         try {
-            indexWriter = new IndexWriter(directory, new IndexWriterConfig(AnalyzerFactory.createAnalyzer(analyzerType)));
+            indexWriter = new IndexWriter(directory, new IndexWriterConfig(AnalyzerFactory.getAnalyzer()));
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -110,12 +110,12 @@ public class IndexManager {
         indexWriter.commit();
     }
 
-    private Document getDocument(String term, String value) throws IOException, ParseException {
+    private Document getDocument(String field, String value) throws IOException, ParseException {
         Document document = null;
-        IndexSearcher searcher = SearcherManager.createSearcher(Constants.INDEX_DIR_STANDARD);
+        IndexSearcher searcher = SearcherManager.createSearcher();
         QueryManager.getInstance().setSearcher(searcher);
 
-        for (ScoreDoc scoreDoc : QueryManager.getInstance().searchIndex(term, 1, value).scoreDocs) {
+        for (ScoreDoc scoreDoc : QueryManager.getInstance().searchIndex(field, 1, value).scoreDocs) {
             document = searcher.doc(scoreDoc.doc);
         }
         return document;
