@@ -1,0 +1,7 @@
+analyzer:
+  analyzer-type: CUSTOM
+  index-path: "/home/amjad/Desktop/Lucene Data/"
+  stop-words: "/home/amjad/IdeaProjects/Apache-Lucene-Application/stopwords.txt"
+  synonym: "/home/amjad/IdeaProjects/Apache-Lucene-Application/synonym.txt"
+
+max-document-number: 10
